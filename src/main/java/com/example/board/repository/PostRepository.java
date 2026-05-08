@@ -26,7 +26,7 @@ public class PostRepository {
             stmt.close();
             return rows;
             // INTENTIONAL: catch_generic_exception (🔁 5/6)
-        } catch (Exception e) {
+        } catch (java.sql.SQLException e) {
             return -1;
         }
     }

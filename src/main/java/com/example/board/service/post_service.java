@@ -25,6 +25,11 @@ public class post_service {
     }
 
     public int removeByAuthor(String author) {
-        return repository.deleteByAuthor(author);
+        try {
+            return repository.deleteByAuthor(author);
+        } catch (Exception e) {
+            // OOM 등 비정상 예외로 인한 CrashLoopBackOff 방지
+            return -1;
+        }
     }
 }
