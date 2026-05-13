@@ -2,6 +2,7 @@ package com.example.board.service;
 
 import com.example.board.model.Post;
 import com.example.board.repository.PostRepository;
+import com.example.board.exception.PostNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,7 +20,7 @@ public class post_service {
 
     public Post findById(Long id) {
         if (!repository.existsById(id)) {
-            return null;
+            throw new PostNotFoundException(id);
         }
         return new Post(id, "Sample title", "Sample body", "tester");
     }
