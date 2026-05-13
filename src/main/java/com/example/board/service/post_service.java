@@ -2,6 +2,7 @@ package com.example.board.service;
 
 import com.example.board.model.Post;
 import com.example.board.repository.PostRepository;
+import com.example.board.exception.PostNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,5 +27,9 @@ public class post_service {
 
     public int removeByAuthor(String author) {
         return repository.deleteByAuthor(author);
+    }
+
+    public Post getPost(Long id) {
+        return repository.findById(id).orElseThrow(() -> new PostNotFoundException(id));
     }
 }
