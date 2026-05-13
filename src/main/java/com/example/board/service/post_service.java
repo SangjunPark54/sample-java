@@ -2,7 +2,9 @@ package com.example.board.service;
 
 import com.example.board.model.Post;
 import com.example.board.repository.PostRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * 게시글 서비스.
@@ -26,5 +28,17 @@ public class post_service {
 
     public int removeByAuthor(String author) {
         return repository.deleteByAuthor(author);
+    }
+
+    public Post getPost(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public static class PostNotFoundException extends RuntimeException {
+        public PostNotFoundException(Long id) {
+            super("Post not found: " + id);
+        }
     }
 }
