@@ -19,7 +19,7 @@ public class post_service {
 
     public Post findById(Long id) {
         if (!repository.existsById(id)) {
-            return null;
+            throw new PostNotFoundException(id);
         }
         return new Post(id, "Sample title", "Sample body", "tester");
     }
