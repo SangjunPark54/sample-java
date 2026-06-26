@@ -2,12 +2,12 @@
 # Spring Boot 3.2.0 / Java 17 (artifactId=board) — multi-stage build
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
+# 의존성: buildkit cache mount(.m2) → buildkit-cache PVC 에 저장·재사용(같은 버전 재다운로드 방지)
 COPY pom.xml .
-RUN mvn -q -B -DskipTests dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 mvn -q -B -DskipTests dependency:go-offline
 COPY src ./src
-# 패키징 후 spring-boot repackage 로 실행 가능한 fat jar 생성(pom 에 plugin 미선언 대비, parent 버전 고정)
-RUN mvn -q -B -DskipTests clean package \
- && mvn -q -B org.springframework.boot:spring-boot-maven-plugin:3.2.0:repackage
+# spring-boot-maven-plugin(pom 선언)이 package 단계에서 실행가능 jar 로 repackage
+RUN --mount=type=cache,target=/root/.m2 mvn -q -B -DskipTests clean package
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
