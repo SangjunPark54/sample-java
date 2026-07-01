@@ -2,13 +2,17 @@ package com.example.board.repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
+import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 게시글 저장소 (INTENTIONAL VIOLATIONS).
  */
+@Repository
 public class PostRepository {
 
+    private static final Logger logger = LoggerFactory.getLogger(PostRepository.class);
     private final Connection conn;
 
     /**
@@ -32,7 +36,7 @@ public class PostRepository {
             pstmt.setString(1, author);
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            // SQLException 발생 시 -1 반환
+            logger.error("Error occurred while deleting posts by author: {}", author, e);
             return -1;
         }
     }
@@ -50,6 +54,7 @@ public class PostRepository {
             var rs = pstmt.executeQuery();
             return rs.next();
         } catch (SQLException e) {
+            logger.error("Error occurred while checking existence of post with ID: {}", id, e);
             return false;
         }
     }
