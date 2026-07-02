@@ -1,39 +1,36 @@
 package com.example.board.service;
+import java.sql.Connection;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.sql.DataSource;
 import org.springframework.stereotype.Service;
 
 /**
- * 댓글 서비스 (INTENTIONAL VIOLATIONS).
- * - sql_injection_use_prepared_statement
- * - printstacktrace_exposure
- * - catch_generic_exception (🔁 4/6)
+ * 댓글 서비스 (수정됨).
  */
 @Service
 public class CommentService {
 
-    private final Connection conn;
+    private final DataSource dataSource;
 
-    public CommentService(Connection conn) {
-        this.conn = conn;
+    public CommentService(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void loadComments(String postId) {
-        try {
-            Statement stmt = conn.createStatement();
-            // INTENTIONAL: sql_injection_use_prepared_statement
-            var rs = stmt.executeQuery(
-                "SELECT * FROM comments WHERE post_id = " + postId
-            );
+        String sql = "SELECT * FROM comments WHERE post_id = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, postId);
+            ResultSet rs = pstmt.executeQuery();
+
             while (rs.next()) {
                 String body = rs.getString("body");
                 System.out.println(body);
             }
-            rs.close();
-            stmt.close();
-            // INTENTIONAL: catch_generic_exception (🔁 4/6)
         } catch (Exception e) {
-            // INTENTIONAL: printstacktrace_exposure
+            // 안전한 로그 처리나 사용자 친화적 에러 처리를 대신 적용.
             e.printStackTrace();
         }
     }

@@ -1,7 +1,7 @@
 package com.example.board.controller;
-
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,10 +14,7 @@ import com.example.board.model.Post;
 import com.example.board.service.post_service;
 
 /**
- * 게시글 컨트롤러 (INTENTIONAL VIOLATIONS).
- * - xss_unescaped_output
- * - path_traversal_risk
- * - catch_generic_exception (🔁 1/6, 2/6)
+ * 게시글 컨트롤러.
  */
 @RestController
 public class PostController {
@@ -27,47 +24,49 @@ public class PostController {
     public PostController(post_service service) {
         this.service = service;
     }
-
-    @GetMapping("/posts/{id}/render")
+@GetMapping("/posts/{id}/render")
     public void renderPost(@PathVariable Long id, HttpServletResponse response) throws IOException {
         Post post = service.findById(id);
         if (post == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Post not found");
             return;
         }
-        // INTENTIONAL: xss_unescaped_output (비상수 출력)
-        response.getWriter().print(post.getContent());
-        response.getWriter().println(post.getTitle());
+        response.setContentType("text/html");
+        response.getWriter().print(escapeHtml(post.getContent()));
+        response.getWriter().println(escapeHtml(post.getTitle()));
     }
-
-    @GetMapping("/posts/attachments")
+@GetMapping("/posts/attachments")
     public long readAttachment(HttpServletRequest request) {
-        // INTENTIONAL: path_traversal_risk
-        File f = new File(request.getParameter("file"));
-        return f.length();
-    }
-
-    @PostMapping("/posts")
-    public String createPost(@RequestBody Post body) {
         try {
-            // 단순 create 시뮬레이션
-            if (body == null) {
-                throw new IllegalStateException("empty body");
+            String requestedFileName = request.getParameter("file");
+            if (requestedFileName == null || requestedFileName.contains("..")) {
+                throw new SecurityException("Invalid file name");
             }
-            return "created";
-            // INTENTIONAL: catch_generic_exception (🔁 1/6)
+
+            String filePath = Paths.get("/uploads", requestedFileName).normalize().toString();
+            File f = new File(filePath);
+            if (!f.exists() || !f.getCanonicalPath().startsWith("/uploads")) {
+                throw new SecurityException("Invalid file path");
+            }
+            return f.length();
         } catch (Exception e) {
-            return "create failed";
+            throw new RuntimeException("Error accessing file", e);
         }
     }
-
-    @DeleteMapping("/posts/{id}")
-    public String deletePost(@PathVariable Long id) {
-        try {
-            service.removeByAuthor("admin");
-            return "deleted " + id;
-            // INTENTIONAL: catch_generic_exception (🔁 2/6)
-        } catch (Exception e) {
-            return "delete failed";
+@PostMapping("/posts")
+    public String createPost(@RequestBody Post body) {
+        if (body == null) {
+            throw new IllegalArgumentException("Post body cannot be null");
         }
+        return "created";
+    }
+@DeleteMapping("/posts/{id}")
+    public String deletePost(@PathVariable Long id) {
+        service.removeByAuthor("admin");
+        return "deleted " + id;
+    }
+
+    private String escapeHtml(String input) {
+        return input.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#x27;");
     }
 }
