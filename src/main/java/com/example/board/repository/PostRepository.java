@@ -1,5 +1,7 @@
 package com.example.board.repository;
 import java.sql.Connection;
+import javax.sql.DataSource;
+import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import org.springframework.stereotype.Repository;
@@ -13,14 +15,15 @@ import org.slf4j.LoggerFactory;
 public class PostRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(PostRepository.class);
-    private final Connection conn;
+    private final DataSource dataSource;
 
     /**
      * 생성자를 통해 데이터베이스 연결 객체를 초기화합니다.
      * 
      * @param conn 데이터베이스 연결 객체
      */
-    public PostRepository(Connection conn) {
+    public PostRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
         this.conn = conn;
     }
 
@@ -32,7 +35,7 @@ public class PostRepository {
      */
     public int deleteByAuthor(String author) {
         String sql = "DELETE FROM posts WHERE author = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, author);
             return pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -49,7 +52,7 @@ public class PostRepository {
      */
     public boolean existsById(Long id) {
         String sql = "SELECT 1 FROM posts WHERE id = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             var rs = pstmt.executeQuery();
             return rs.next();
