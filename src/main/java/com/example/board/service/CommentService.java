@@ -1,7 +1,6 @@
 package com.example.board.service;
-
-import java.sql.Connection;
 import java.sql.Statement;
+import javax.sql.DataSource;
 import org.springframework.stereotype.Service;
 
 /**
