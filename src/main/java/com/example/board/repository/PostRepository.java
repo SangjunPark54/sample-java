@@ -18,13 +18,10 @@ public class PostRepository {
     private final DataSource dataSource;
 
     /**
-     * 생성자를 통해 데이터베이스 연결 객체를 초기화합니다.
-     * 
-     * @param conn 데이터베이스 연결 객체
+     * 생성자를 통해 DataSource를 초기화합니다.
      */
     public PostRepository(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.conn = conn;
     }
 
     /**
