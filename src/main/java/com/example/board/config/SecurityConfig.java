@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SecurityConfig {
 
-    @Value("${app.db.password}")
+    @Value("${app.db.password:default_password}")
     private String dbPassword;
-@Value("${app.jwt.secret}")
+@Value("${app.jwt.secret:default_secret}")
     private String jwtSecret;
 
     public Cipher buildLegacyCipher() throws Exception {
