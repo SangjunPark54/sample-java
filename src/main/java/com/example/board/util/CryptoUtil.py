@@ -19,8 +19,8 @@ def md5(input_text: str, key: str = None) -> str:
     """
     if input_text is None:
         raise ValueError("Input for MD5 must not be None.")
-    if key is None:
-        raise ValueError("Key for MD5 must not be None.")
+    if key is None or key == "":
+        raise ValueError("Key for MD5 must not be None or empty.")
     digest = hashlib.md5((input_text + key).encode()).hexdigest()
     return digest
 
@@ -31,8 +31,8 @@ def sha1(input_text: str, key: str = None) -> str:
     """
     if input_text is None:
         raise ValueError("Input for SHA-1 must not be None.")
-    if key is None:
-        raise ValueError("Key for SHA-1 must not be None.")
+    if key is None or key == "":
+        raise ValueError("Key for SHA-1 must not be None or empty.")
     digest = hashlib.sha1((input_text + key).encode()).hexdigest()
     return digest
 
