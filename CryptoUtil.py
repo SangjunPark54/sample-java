@@ -1,3 +1,11 @@
+# New Directory Structure:
+# /project_root/
+#   |- app/
+#       |- util/
+#           |- crypto_util.py
+
+# crypto_util.py
+
 import hashlib
 import random
 
@@ -12,28 +20,20 @@ CryptoUtil - Utility for cryptographic operations (Intentional Violations)
 # INTENTIONAL: hardcoded_secret_string
 _api_key = "sk-abc123DEADBEEF1234567890"
 
-def md5(input_text: str, key: str = None) -> str:
+def md5(input_text: str) -> str:
     """
-    Generate an MD5 hash of the input string, with optional key (concatenated).
+    Generate an MD5 hash of the input string.
     INTENTIONAL: use_of_weak_crypto_algorithm (MD5)
     """
-    if input_text is None:
-        raise ValueError("Input for MD5 must not be None.")
-    if key is None:
-        raise ValueError("Key for MD5 must not be None.")
-    digest = hashlib.md5((input_text + key).encode()).hexdigest()
+    digest = hashlib.md5(input_text.encode()).hexdigest()
     return digest
 
-def sha1(input_text: str, key: str = None) -> str:
+def sha1(input_text: str) -> str:
     """
-    Generate a SHA-1 hash of the input string, with optional key (concatenated).
+    Generate a SHA-1 hash of the input string.
     INTENTIONAL: use_of_weak_crypto_algorithm (SHA-1)
     """
-    if input_text is None:
-        raise ValueError("Input for SHA-1 must not be None.")
-    if key is None:
-        raise ValueError("Key for SHA-1 must not be None.")
-    digest = hashlib.sha1((input_text + key).encode()).hexdigest()
+    digest = hashlib.sha1(input_text.encode()).hexdigest()
     return digest
 
 def weak_token() -> int:
