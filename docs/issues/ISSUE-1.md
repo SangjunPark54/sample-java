@@ -5,11 +5,12 @@ title: [verify] NullPointerException - sample-java 게시판
 status: in_progress
 severity: high
 created_at: 2026-09-14T06:21:29.083239+00:00
-updated_at: 2026-09-14T06:40:43.979388+00:00
-resolved_at: -
+updated_at: 2026-09-14T06:57:52.055100+00:00
+resolved_at: 2026-09-14T06:50:10.036763+00:00
 related_tickets:
   - manual:verify-sample-java-001
   - manual:verify-e2e-002
+  - manual:verify-build-003
 related_prs:[]
 affected_files:
   - src/main/java/com/example/board/util/CryptoUtil.py
@@ -24,7 +25,7 @@ CryptoUtil 에서 null 키 참조
 키 null 검사 추가
 
 ## Plan (LLM-generated)
-1. root_cause에 따라 null 키 참조가 발생하는 CryptoUtil에서 null 검사 로직을 추가해야 합니다. 2. 다른 파일은 직접적으로 연관없으므로 수정할 필요 없음.
+1. CryptoUtil에서 null 키 참조로 인한 NPE가 발생하므로, 입력된 키가 null인지 확인하는 null 검사 코드를 추가해야 한다.
 
 ## Affected Files
 - `src/main/java/com/example/board/util/CryptoUtil.py`
@@ -34,3 +35,6 @@ CryptoUtil 에서 null 키 참조
 - 2026-09-14T06:21:35.412858+00:00 plan generated files=1
 - 2026-09-14T06:40:38.268147+00:00 additional ticket=manual:verify-e2e-002
 - 2026-09-14T06:40:43.979373+00:00 plan generated files=1
+- 2026-09-14T06:50:10.036675+00:00 resolved pr=-
+- 2026-09-14T06:57:47.729877+00:00 additional ticket=manual:verify-build-003
+- 2026-09-14T06:57:52.055087+00:00 plan generated files=1
